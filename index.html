@@ -1,0 +1,176 @@
+<html>
+	<head>
+		<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+		<script
+  src="https://code.jquery.com/jquery-3.4.1.js"
+  integrity="sha256-WpOohJOqMqqyKL9FccASB9O0KwACQJpFTUBLTYOVvVU="
+  crossorigin="anonymous"></script>
+		<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
+		<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
+		<title>
+			Corono Virus Optimization using Tweepy, Elasticsearch and Kibana
+		</title>
+		<style type="text/css">
+          
+		  
+			#slideshow { 
+				margin: 50px auto; 
+				position: relative; 
+				width: 240px; 
+				height: 240px; 
+				padding: 10px; 
+				box-shadow: 0 0 20px rgba(0,0,0,0.4); 
+			}
+
+			#slideshow > div { 
+				position: absolute; 
+				top: 10px; 
+				left: 10px; 
+				right: 10px; 
+				bottom: 10px; 
+			} 
+		  
+		  
+		  
+		  
+      </style>
+	  
+	  <script>
+		setInterval(function(){ window.location.replace("http://172.30.93.57:5000/update/") }, 1000000);
+		
+		$("#slideshow > div:gt(0)").hide();
+
+		setInterval(function() { 
+		$('#slideshow > div:first')
+		.fadeOut(1000)
+		.next()
+		.fadeIn(1000)
+		.end()
+		.appendTo('#slideshow');
+		},  3000);
+	  
+	  
+		async function getPictures(){
+			
+			let jsonp = await fetch('https://api.shutterstock.com/v2/images/search?contributor_country=US&page=1&per_page=20&query=CoronaVirus&safe=true&sort=popular&spellcheck_query=true&view=minimal', {
+						  method: 'GET',
+						  headers: {
+							'Authorization': 'Basic SjU5bFh6UllVTEFYcE53eUlFWmNtUDN0ckd6VTMzM086NVV6MDN0Vnp6NEp5ZjVvRw'
+						  }
+						});
+			let getData = await jsonp.json();
+			
+			for(let i=0;i<4;i++){
+			
+				var div = document.createElement("div");
+				var imgs = document.createElement("img")
+				imgs.src = getData['data'][i]['assets']['preview']['url'];
+				div.appendChild(imgs);
+				document.getElementById('slideshow').appendChild(div);
+			}
+
+			
+			
+			imageId = getData['data'][0]['id']
+			
+			let getCat = await fetch('https://api.shutterstock.com/v2/images/'+imageId+'?language=es&view=full', {
+						  method: 'GET',
+						  headers: {
+							'Authorization': 'Basic SjU5bFh6UllVTEFYcE53eUlFWmNtUDN0ckd6VTMzM086NVV6MDN0Vnp6NEp5ZjVvRw'
+						  }
+						});
+			let getCat_json = await getCat.json();
+			var categories = getCat_json['keywords']
+
+			text = '';
+			for (i = 0; i < 10; i++) {
+			  text += '<p style="color: white;">' + categories[i] + "</p>";
+			}
+			document.getElementById("recommended").innerHTML = text;
+
+
+			
+		}
+	  
+	  
+	  
+	  </script>
+	</head>
+	<body onload="getPictures()" style="background-color: black;">
+		<div style="text-align: center!important;padding: 1rem 2rem;margin-bottom: 1rem;
+		background-color: #e9ecef;
+		border-radius: .3rem;">
+			  <h1><b><i>Data Wiz</i></b></h1>
+			  <p><b><i>Data Virtualization and Sentiment Analysis</i></b></p> 
+		</div>
+		<div class="container-fluid">
+			
+			  <div class="row">
+				<div class="col-sm-6 text-center">
+				
+				  <h3 style="color: white;"><u>World map Analysis</u> </h3>
+				  <iframe src="http://localhost:5601/app/kibana#/visualize/edit/274a9880-4021-11ea-ba84-5353d2b0961a?embed=true&_g=(filters%3A!()%2CrefreshInterval%3A(pause%3A!t%2Cvalue%3A2000)%2Ctime%3A(from%3A'2019-10-01T07%3A20%3A49.781Z'%2Cto%3A'2020-01-26T08%3A35%3A23.967Z'))" height="600" width="800" style="padding-right: 31px;">
+					</iframe>
+				  
+				</div>
+				<div class="col-sm-6 text-center">
+				
+				  <h3 class="text-center" style="color: white;"><u>Trending Tweets</u></h3>
+				 <iframe src="http://localhost:5601/app/kibana#/visualize/edit/7ba598d0-4021-11ea-ba84-5353d2b0961a?embed=true&_g=(filters%3A!()%2CrefreshInterval%3A(pause%3A!t%2Cvalue%3A2000)%2Ctime%3A(from%3A'2019-10-01T07%3A20%3A49.781Z'%2Cto%3A'2020-01-26T08%3A35%3A23.967Z'))" height="600" width="800">
+					</iframe>
+				  
+				</div>
+			  </div>
+			  
+			  <div class="row">
+				<div class="col-sm-6 text-center" style="padding-top: 43px;">
+				
+				  <h3 style="color: white;"><i><u>Related Images</u></i></h3>
+					<div id="slideshow">
+						
+					</div>
+				  
+				</div>
+				<div class="col-sm-6 text-center" style="padding-top: 43px;">
+				
+				  <h3 class="text-center" style="color: white;"><u><i>Recommended Search</i><u></h3>
+					<div id="recommended">
+						
+					</div>
+				  
+				</div>
+			  </div>
+			  
+			  <div class="row">
+			  
+				<div class="col-sm-4 text-center" style="padding-top: 43px;">
+					<h3 style="color: white;"><i><u>positive</u></i></h3>
+					{% for thing in value %}
+						{%  if thing.sentiment=="positive" %}
+								<p style="color: white;">{{ thing.text }}</p>
+					  {% endif %}
+					{% endfor %}
+				</div>
+				<div class="col-sm-4 text-center" style="padding-top: 43px;">
+					<h3 class="text-center" style="color: white;"><u><i>Neutral</i><u></h3>
+					{% for thing in value %}
+					  {%  if thing.sentiment=="neutral" %}
+					  
+						<p style="color: white;">{{ thing.text }}</p>
+					  {% endif %}
+					{% endfor %}
+				</div>
+				<div class="col-sm-4 text-center" style="padding-top: 43px;">
+				
+					<h3 class="text-center" style="color: white;"><u><i>Negative</i><u></h3>
+					{% for thing in value %}
+						{%  if thing.sentiment=="negative" %}
+				  
+						<p style="color: white;">{{ thing.text }}</p>
+						{% endif %}
+					{% endfor %}
+				</div>
+			 </div>
+		</div>
+	</body>
+</html>
